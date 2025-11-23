@@ -63,10 +63,40 @@ The application follows a modern Next.js architecture with a focus on client-sid
 
 ### Data Flow
 
-1.  **User Input**: Voice is captured via microphone -> Transcribed to text (STT).
-2.  **Processing**: Text is sent to `/api/chat` -> Gemini processes input with context -> Returns text response + metadata (phase, feedback).
-3.  **Output**: Text response is converted to audio (TTS) -> Played to user -> UI updates (Orb animation, Subtitles).
-4.  **Storage**: Session data (logs, scores) is saved to `localStorage` for persistence across sessions.
+```mermaid
+graph TD
+    User[User (Voice/Text)] -->|Input| Client[Next.js Client]
+    Client -->|STT| Transcript[Text Transcript]
+    Transcript -->|POST /api/chat| API[API Route]
+    API -->|Prompt + Context| LLM[Gemini Pro]
+    LLM -->|Response + Metadata| API
+    API -->|JSON| Client
+    Client -->|TTS| Audio[Audio Output]
+    Client -->|Update UI| UI[Orb / HUD / Code]
+    
+    subgraph "State Management"
+        Client <-->|Read/Write| LocalStorage[Browser Storage]
+    end
+```
+
+## 🧠 System Design
+
+### AI System Prompts
+The core of EightFold's intelligence lies in its carefully crafted system prompts. The AI acts as a "Senior Technical Interviewer" at a top-tier tech company.
+*   **Tone**: Professional, encouraging, yet rigorous.
+*   **Goal**: Assess the candidate's technical depth, problem-solving skills, and communication.
+*   **Phases**:
+    1.  **Introduction**: Ice-breaking and role confirmation.
+    2.  **Discovery**: Experience walkthrough and project deep dives.
+    3.  **Technical Deep Dive**: Core technical concepts (e.g., React lifecycle, Database indexing).
+    4.  **Coding Challenge**: A practical coding problem (if applicable).
+    5.  **Conclusion**: Wrap-up and candidate questions.
+
+### Guardrails & Integrity
+To ensure a fair and effective interview, the system implements several guardrails:
+1.  **Silence Detection**: If silence persists for >5 seconds, the system prompts the user or auto-submits.
+2.  **Irrelevance Detection**: The AI evaluates the semantic relevance of the user's response.
+3.  **Anti-Cheating**: The coding workspace monitors typing speed and paste events.
 
 ## 🎨 Design Decisions
 
