@@ -2,7 +2,7 @@
 
 ## 🧠 AI System Prompts
 
-The core of EightFold's intelligence lies in its carefully crafted system prompts. These prompts define the persona, behavior, and evaluation criteria for the AI interviewer.
+The core of the **AI Interview Agent's** intelligence lies in its carefully crafted system prompts. These prompts define the persona, behavior, and evaluation criteria for the AI interviewer.
 
 ### Interviewer Persona (Gemini)
 The AI acts as a "Senior Technical Interviewer" at a top-tier tech company.

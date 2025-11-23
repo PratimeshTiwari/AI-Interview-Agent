@@ -1,6 +1,6 @@
 # Deployment Guide
 
-This guide will help you deploy your EightFold application to the internet using Vercel, the creators of Next.js.
+This guide will help you deploy your **AI Interview Agent** application to the internet using Vercel, the creators of Next.js.
 
 ## Prerequisites
 
@@ -17,7 +17,7 @@ git init
 git add .
 git commit -m "Initial commit"
 git branch -M main
-git remote add origin https://github.com/PratimeshTiwari/eightfold.git
+git remote add origin https://github.com/PratimeshTiwari/AI-Interview-Agent.git
 git push -u origin main
 ```
 
@@ -25,7 +25,7 @@ git push -u origin main
 
 1.  Go to the [Vercel Dashboard](https://vercel.com/dashboard).
 2.  Click **"Add New..."** -> **"Project"**.
-3.  Import your `eightfold` repository from GitHub.
+3.  Import your `AI-Interview-Agent` repository from GitHub.
 4.  In the **Configure Project** screen:
     *   **Framework Preset**: Next.js (should be auto-detected).
     *   **Root Directory**: `./` (default).
@@ -38,7 +38,7 @@ git push -u origin main
 
 ## Step 3: Verify Deployment
 
-Vercel will build your project. Once complete (usually 1-2 minutes), you will get a live URL (e.g., `https://eightfold-app.vercel.app`).
+Vercel will build your project. Once complete (usually 1-2 minutes), you will get a live URL (e.g., `https://ai-interview-agent.vercel.app`).
 
 *   **Test Login**: Ensure you can log in as "Pratimesh Tiwari".
 *   **Test Interview**: Grant microphone permissions and try a session.

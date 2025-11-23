@@ -1,6 +1,6 @@
-# EightFold - AI Interview Agent
+# AI Interview Agent
 
-EightFold is an advanced AI-powered interview practice platform designed to simulate real-world technical interviews. It features a conversational AI agent, real-time feedback, coding workspace, and detailed performance analytics.
+**AI Interview Agent** is an advanced AI-powered interview practice platform designed to simulate real-world technical interviews. It features a conversational AI agent, real-time feedback, coding workspace, and detailed performance analytics.
 
 ## 🚀 Features
 
@@ -24,8 +24,8 @@ EightFold is an advanced AI-powered interview practice platform designed to simu
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/PratimeshTiwari/eightfold.git
-    cd eightfold
+    git clone https://github.com/PratimeshTiwari/AI-Interview-Agent.git
+    cd AI-Interview-Agent
     ```
 
 2.  **Install dependencies:**
@@ -65,24 +65,24 @@ The application follows a modern Next.js architecture with a focus on client-sid
 
 ```mermaid
 graph TD
-    User[User (Voice/Text)] -->|Input| Client[Next.js Client]
-    Client -->|STT| Transcript[Text Transcript]
-    Transcript -->|POST /api/chat| API[API Route]
-    API -->|Prompt + Context| LLM[Gemini Pro]
+    User["User (Voice/Text)"] -->|Input| Client["Next.js Client"]
+    Client -->|STT| Transcript["Text Transcript"]
+    Transcript -->|POST /api/chat| API["API Route"]
+    API -->|Prompt + Context| LLM["Gemini Pro"]
     LLM -->|Response + Metadata| API
     API -->|JSON| Client
-    Client -->|TTS| Audio[Audio Output]
-    Client -->|Update UI| UI[Orb / HUD / Code]
+    Client -->|TTS| Audio["Audio Output"]
+    Client -->|Update UI| UI["Orb / HUD / Code"]
     
     subgraph "State Management"
-        Client <-->|Read/Write| LocalStorage[Browser Storage]
+        Client <-->|Read/Write| LocalStorage["Browser Storage"]
     end
 ```
 
 ## 🧠 System Design
 
 ### AI System Prompts
-The core of EightFold's intelligence lies in its carefully crafted system prompts. The AI acts as a "Senior Technical Interviewer" at a top-tier tech company.
+The core of the **AI Interview Agent's** intelligence lies in its carefully crafted system prompts. The AI acts as a "Senior Technical Interviewer" at a top-tier tech company.
 *   **Tone**: Professional, encouraging, yet rigorous.
 *   **Goal**: Assess the candidate's technical depth, problem-solving skills, and communication.
 *   **Phases**:
@@ -114,6 +114,4 @@ To ensure a fair and effective interview, the system implements several guardrai
     *   **<50%**: Vague or surface-level answers.
     *   **>80%**: Detailed, technical, and well-structured responses.
 
-## 📝 License
 
-MIT License
