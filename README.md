@@ -11,6 +11,7 @@
 *   **Dashboard Analytics**: Track your progress with skill confidence charts, readiness trackers, and detailed session history.
 *   **Memory Bank**: The AI remembers context from previous sessions to provide a personalized experience.
 *   **Guardrails & Anti-Cheating**: Mechanisms to detect silence, irrelevant answers, and ensure interview integrity.
+*   **Plagiarism Detection**: Monitors coding patterns and paste events to flag potential cheating.
 
 ## 🛠️ Tech Stack
 
@@ -59,7 +60,23 @@ The application follows a modern Next.js architecture with a focus on client-sid
 *   **`src/app/dashboard/page.tsx`**: User dashboard for analytics and history.
 *   **`src/app/api/chat/route.ts`**: Main API route for handling chat interactions. Interfaces with Gemini to generate responses based on the conversation history and system prompt.
 *   **`src/app/api/summary/route.ts`**: Generates a structured summary and score after the interview concludes.
+*   **`src/app/api/summary/route.ts`**: Generates a structured summary and score after the interview concludes.
 *   **`src/hooks/useSpeechRecognition.ts`**: Custom hook for managing Web Speech API interactions, including silence detection.
+
+### API Endpoints & Page Logic
+
+*   **`/api/chat` (POST)**:
+    *   **Logic**: Receives user transcript + conversation history. Uses Gemini Pro to generate a context-aware response based on the current interview phase (Intro, Discovery, Technical, etc.).
+    *   **Output**: JSON containing the AI's response text, current phase, and feedback.
+*   **`/api/summary` (POST)**:
+    *   **Logic**: Analyzes the entire interview transcript. Scores the candidate on Technical Accuracy, Communication, and Problem Solving.
+    *   **Output**: JSON with final score (0-100%), strengths, weaknesses, and a summary.
+*   **`/api/helper` (POST)**:
+    *   **Logic**: A lightweight endpoint for the Dashboard "AI Helper" widget. Answers quick questions about interview prep.
+*   **`/interview` (Page)**:
+    *   **Logic**: Manages the real-time interview state. Handles microphone input, visualizes audio, and coordinates the "User -> STT -> AI -> TTS" loop.
+*   **`/dashboard` (Page)**:
+    *   **Logic**: Aggregates past interview data from `localStorage`. Visualizes progress using charts and readiness trackers.
 
 ### Data Flow
 
@@ -97,6 +114,7 @@ To ensure a fair and effective interview, the system implements several guardrai
 1.  **Silence Detection**: If silence persists for >5 seconds, the system prompts the user or auto-submits.
 2.  **Irrelevance Detection**: The AI evaluates the semantic relevance of the user's response.
 3.  **Anti-Cheating**: The coding workspace monitors typing speed and paste events.
+4.  **Plagiarism Detection**: The system flags large blocks of code pasted instantly or solutions that match known patterns too closely.
 
 ## 🎨 Design Decisions
 
