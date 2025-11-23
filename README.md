@@ -12,6 +12,18 @@
 *   **Memory Bank**: The AI remembers context from previous sessions to provide a personalized experience.
 *   **Guardrails & Anti-Cheating**: Mechanisms to detect silence, irrelevant answers, and ensure interview integrity.
 *   **Plagiarism Detection**: Monitors coding patterns and paste events to flag potential cheating.
+*   **Kernel HUD**: A real-time log viewer that exposes the AI's internal reasoning, behavioral analysis (e.g., "Confident", "Chatty"), and scoring logic.
+
+## 🧪 How to Test
+
+1.  **Start**: Run `npm run dev` and go to `http://localhost:3000`.
+2.  **Login**: Select "Pratimesh Tiwari" (Software Engineer).
+3.  **Explore Dashboard**: Check out the stats, skill chart, and toggle the theme.
+4.  **Interview**: Click "Start Session".
+    *   Allow microphone access.
+    *   Say: *"Hi, I'm Pratimesh. I have 5 years of experience in React."*
+    *   Listen to the response.
+5.  **Check Memory**: Click "End Session". Look at the **Memory Bank** in the dashboard—it should now list your React experience!
 
 ## 🛠️ Tech Stack
 
@@ -78,8 +90,20 @@ The application follows a modern Next.js architecture with a focus on client-sid
 *   **`/dashboard` (Page)**:
     *   **Logic**: Aggregates past interview data from `localStorage`. Visualizes progress using charts and readiness trackers.
 
-### Data Flow
+### Data Flow & User Journey
 
+#### 1. User Journey
+```mermaid
+graph LR
+    Login[Login Page] -->|Auth| Dashboard[Dashboard]
+    Dashboard -->|Start| Interview[Interview Session]
+    Interview -->|Voice/Text| AI[AI Agent]
+    AI -->|Feedback| HUD[Kernel HUD]
+    Interview -->|End| Summary[Summary & Score]
+    Summary -->|Save| Dashboard
+```
+
+#### 2. System Data Flow
 ```mermaid
 graph TD
     User["User (Voice/Text)"] -->|Input| Client["Next.js Client"]
@@ -96,6 +120,30 @@ graph TD
     end
 ```
 
+#### 3. Behavioral Analysis (Kernel HUD)
+The **Kernel HUD** provides transparency into the AI's thought process. It logs every interaction with:
+*   **Timestamp**: When the event occurred.
+*   **Phase**: Current interview stage (e.g., "Technical Deep Dive").
+*   **Reasoning**: Why the AI asked a specific question or gave a certain score.
+*   **Behavioral Tags**:
+    *   `Confident`: Clear, concise answers.
+    *   `Chatty`: Excessive or irrelevant talking.
+    *   `Nervous`: Frequent pauses or fillers (detected via silence/stutter).
+    *   `Strong/Weak`: Quality of the technical answer.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant AI
+    participant Kernel
+    
+    User->>AI: "I used React Context for state management."
+    AI->>Kernel: Analyze Sentiment & Technical Depth
+    Kernel-->>AI: { quality: "Strong", behavior: "Confident" }
+    AI->>User: "Great choice. How did you handle re-renders?"
+    Kernel->>Kernel: Log: "User showed good understanding of Context API."
+```
+
 ## 🧠 System Design
 
 ### AI System Prompts
@@ -109,12 +157,43 @@ The core of the **AI Interview Agent's** intelligence lies in its carefully craf
     4.  **Coding Challenge**: A practical coding problem (if applicable).
     5.  **Conclusion**: Wrap-up and candidate questions.
 
+### System Prompt Structure
+```text
+You are an expert technical interviewer for the role of {role}.
+Your goal is to assess the candidate's skills in {skills}.
+
+GUIDELINES:
+- Ask one question at a time.
+- Be concise (max 2-3 sentences).
+- Dig deeper if the answer is vague.
+- Move to the next topic if the candidate demonstrates mastery.
+- Maintain a professional but friendly tone.
+
+PHASES:
+[...detailed phase descriptions...]
+```
+
 ### Guardrails & Integrity
 To ensure a fair and effective interview, the system implements several guardrails:
-1.  **Silence Detection**: If silence persists for >5 seconds, the system prompts the user or auto-submits.
-2.  **Irrelevance Detection**: The AI evaluates the semantic relevance of the user's response.
+1.  **Silence Detection**: The `useSpeechRecognition` hook monitors audio input. If silence persists for >5 seconds, the system prompts the user or auto-submits.
+2.  **Irrelevance Detection**: The AI evaluates the semantic relevance of the user's response. If the score is low, it redirects: *"That's interesting, but could you clarify how it relates to [Topic]?"*
 3.  **Anti-Cheating**: The coding workspace monitors typing speed and paste events.
 4.  **Plagiarism Detection**: The system flags large blocks of code pasted instantly or solutions that match known patterns too closely.
+
+## 📊 Scoring System
+
+The scoring logic is multi-dimensional, evaluating the candidate on:
+1.  **Technical Accuracy (40%)**: Correctness of facts and code.
+2.  **Communication (30%)**: Clarity, structure, and conciseness.
+3.  **Problem Solving (30%)**: Approach to unknown problems and debugging.
+
+### Scoring Rubric
+The `/api/summary` endpoint uses a specific rubric to generate the final score (0-100%):
+
+*   **0-30% (Fail)**: No answer, "I don't know", or significant factual errors.
+*   **31-60% (Needs Improvement)**: Vague answers, correct concepts but poor explanation.
+*   **61-85% (Pass)**: Clear, accurate answers with good examples.
+*   **86-100% (Strong Hire)**: Deep technical insight (trade-offs, internals), exceptional communication, and optimized code.
 
 ## 🎨 Design Decisions
 
@@ -123,13 +202,6 @@ To ensure a fair and effective interview, the system implements several guardrai
 *   **Fallback Mechanisms**: Implemented fallbacks for TTS (ElevenLabs -> OpenAI -> Browser) to ensure reliability.
 *   **Modular Components**: UI elements like `AIOrb`, `KernelHUD`, and `CodingWorkspace` are separated for maintainability.
 
-## 🛡️ Guardrails & Scoring
 
-*   **Silence Detection**: Automatically nudges the user if no input is detected for a set duration.
-*   **Relevance Check**: The AI evaluates if the user's answer is relevant to the question. Irrelevant answers receive a low score.
-*   **Scoring Logic**:
-    *   **0%**: No meaningful response or completely irrelevant.
-    *   **<50%**: Vague or surface-level answers.
-    *   **>80%**: Detailed, technical, and well-structured responses.
 
 
