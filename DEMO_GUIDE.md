@@ -42,7 +42,4 @@
 2.  **Summary**: Show the "Session Summary" modal with the score.
 3.  **Dashboard Update**: Show the **Memory Bank** updated with new skills mentioned during the chat.
 
-## 4. Recording Tips
-- **Audio**: Use a good mic and enable "System Audio" recording so the viewer hears the AI.
-- **Visuals**: Zoom in slightly on the **Kernel HUD** and **Code Editor** when they appear.
-- **Pacing**: Speak clearly and pause to let the AI finish speaking.
+

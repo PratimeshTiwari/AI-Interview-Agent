@@ -72,7 +72,6 @@ The application follows a modern Next.js architecture with a focus on client-sid
 *   **`src/app/dashboard/page.tsx`**: User dashboard for analytics and history.
 *   **`src/app/api/chat/route.ts`**: Main API route for handling chat interactions. Interfaces with Gemini to generate responses based on the conversation history and system prompt.
 *   **`src/app/api/summary/route.ts`**: Generates a structured summary and score after the interview concludes.
-*   **`src/app/api/summary/route.ts`**: Generates a structured summary and score after the interview concludes.
 *   **`src/hooks/useSpeechRecognition.ts`**: Custom hook for managing Web Speech API interactions, including silence detection.
 
 ### API Endpoints & Page Logic

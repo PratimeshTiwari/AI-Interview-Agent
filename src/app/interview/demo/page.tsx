@@ -136,10 +136,16 @@ export default function DemoPage() {
         }]);
     }, []);
 
-    const { startListening, stopListening, isListening: micActive } = useSpeechRecognition({
-        onResult: (text) => setTranscript(text),
-        onError: (err) => console.error("Mic error:", err)
-    });
+    const { startListening, stopListening, isListening: micActive, transcript: liveTranscript, error: micError } = useSpeechRecognition({});
+
+    // Sync transcript and error
+    useEffect(() => {
+        if (liveTranscript) setTranscript(liveTranscript);
+    }, [liveTranscript]);
+
+    useEffect(() => {
+        if (micError) console.error("Mic error:", micError);
+    }, [micError]);
 
     // Sync mic state
     useEffect(() => { setIsListening(micActive); }, [micActive]);
