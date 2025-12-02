@@ -48,12 +48,6 @@ export default function DashboardPage() {
         }
         setUser(JSON.parse(storedUser));
 
-        // Load interview history
-        const storedHistory = localStorage.getItem("interviewHistory");
-        if (storedHistory) {
-            setHistory(JSON.parse(storedHistory));
-        }
-
         // Load memories
         const storedMemories = localStorage.getItem("userMemories");
         if (storedMemories) {
@@ -71,6 +65,18 @@ export default function DashboardPage() {
             }
         }
     }, [router]);
+
+    // Fetch history from API when user is loaded
+    useEffect(() => {
+        if (user?.id) {
+            fetch(`/api/history?userId=${user.id}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (Array.isArray(data)) setHistory(data);
+                })
+                .catch(err => console.error("Failed to fetch history:", err));
+        }
+    }, [user]);
 
     const toggleTheme = () => {
         const newTheme = theme === "dark" ? "light" : "dark";
@@ -328,7 +334,7 @@ export default function DashboardPage() {
                                     <div className="flex items-center justify-between mb-3">
                                         <div>
                                             <h4 className="text-white font-medium text-sm group-hover:text-cyan-400 transition-colors">{interview.role}</h4>
-                                            <p className="text-xs text-slate-500">{new Date(interview.date).toLocaleDateString()} • {interview.duration}</p>
+                                            <p className="text-xs text-slate-500">{new Date(interview.createdAt).toLocaleDateString()} • {interview.duration || "15m"}</p>
                                         </div>
                                         <div className="text-right flex items-center gap-3">
                                             <div>

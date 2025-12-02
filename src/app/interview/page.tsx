@@ -167,35 +167,37 @@ export default function InterviewPage() {
             });
             const summaryData = await res.json();
 
-            const history = JSON.parse(localStorage.getItem("interviewHistory") || "[]");
             const newSession = {
-                date: new Date().toISOString(),
+                userId: currentUser?.id,
                 role: jobRole,
-                duration: "10m", // Mock duration
+                messages: messages,
                 score: summaryData.score,
                 summary: summaryData.summary,
                 strengths: summaryData.strengths,
                 weaknesses: summaryData.weaknesses
             };
-            history.unshift(newSession);
-            localStorage.setItem("interviewHistory", JSON.stringify(history));
+
+            // Save to API
+            if (currentUser?.id) {
+                await fetch("/api/history", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(newSession)
+                });
+            }
 
             setSummaryResult(newSession);
             setShowSummaryModal(true);
 
         } catch (error) {
             console.error("Failed to generate summary", error);
-            const history = JSON.parse(localStorage.getItem("interviewHistory") || "[]");
+            // Fallback for error
             const newSession = {
-                date: new Date().toISOString(),
+                userId: currentUser?.id,
                 role: jobRole,
-                duration: "10m",
                 score: 0,
-                summary: "Summary unavailable",
+                summary: "Summary unavailable due to error.",
             };
-            history.unshift(newSession);
-            localStorage.setItem("interviewHistory", JSON.stringify(history));
-
             setSummaryResult(newSession);
             setShowSummaryModal(true);
         } finally {
@@ -278,7 +280,7 @@ export default function InterviewPage() {
                 }
             }
 
-            const aiText = data.response;
+            const aiText = data.response || "";
             setAiSubtitle(aiText);
 
             // Check for explicit coding requests (more specific keywords)
@@ -310,21 +312,24 @@ export default function InterviewPage() {
 
             // Play AI response via TTS
             try {
-                const speakRes = await fetch("/api/speak", {
-                    method: "POST",
-                    body: JSON.stringify({ text: aiText }),
-                });
-                if (!speakRes.ok) throw new Error("TTS API failed");
-                const audioBlob = await speakRes.blob();
-                const audioUrl = URL.createObjectURL(audioBlob);
-                if (audioRef.current) {
-                    audioRef.current.src = audioUrl;
-                    await audioRef.current.play();
-                    setIsSpeaking(true);
-                    audioRef.current.onended = () => {
-                        setIsSpeaking(false);
-                        setAiSubtitle("");
-                    };
+                if (aiText) {
+                    const speakRes = await fetch("/api/speak", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ text: aiText }),
+                    });
+                    if (!speakRes.ok) throw new Error("TTS API failed");
+                    const audioBlob = await speakRes.blob();
+                    const audioUrl = URL.createObjectURL(audioBlob);
+                    if (audioRef.current) {
+                        audioRef.current.src = audioUrl;
+                        await audioRef.current.play();
+                        setIsSpeaking(true);
+                        audioRef.current.onended = () => {
+                            setIsSpeaking(false);
+                            setAiSubtitle("");
+                        };
+                    }
                 }
             } catch (ttsError) {
                 console.error("TTS API Error, falling back to Browser TTS:", ttsError);

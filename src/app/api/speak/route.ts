@@ -44,7 +44,9 @@ export async function POST(req: Request) {
                         headers: { "Content-Type": "audio/mpeg" },
                     });
                 } else {
-                    console.warn("ElevenLabs API failed, falling back to OpenAI...");
+                    const errorText = await response.text();
+                    console.warn(`ElevenLabs API failed with status ${response.status}: ${errorText}`);
+                    console.warn("Falling back to OpenAI...");
                 }
             } catch (err) {
                 console.warn("ElevenLabs error, falling back to OpenAI:", err);
@@ -71,7 +73,7 @@ export async function POST(req: Request) {
     } catch (error) {
         console.error("Error in speak API:", error);
         return NextResponse.json(
-            { error: "Failed to generate speech" },
+            { error: "Failed to generate speech", details: error instanceof Error ? error.message : String(error) },
             { status: 500 }
         );
     }

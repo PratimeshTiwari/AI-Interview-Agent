@@ -3,7 +3,7 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IMemory extends Document {
     userId: string;
     text: string;
-    type: 'skill' | 'experience' | 'preference' | 'weakness';
+    type: 'fact' | 'preference' | 'summary' | 'experience' | 'skill' | 'weakness';
     createdAt: Date;
 }
 
@@ -12,9 +12,10 @@ const MemorySchema: Schema = new Schema({
     text: { type: String, required: true },
     type: {
         type: String,
-        enum: ['skill', 'experience', 'preference', 'weakness'],
+        enum: ['fact', 'preference', 'summary', 'experience', 'skill', 'weakness'],
         required: true
     },
+    embedding: { type: [Number], index: true }, // Vector embedding for RAG
     createdAt: { type: Date, default: Date.now },
 });
 
